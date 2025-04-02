@@ -23,7 +23,7 @@ def test_k_zero():
 
 def test_negative_numbers():
     """Test with a list containing negative numbers"""
-    assert max_subarray_sum([-1, -2, 3, 4, -5, 6, 7], 3) == 17
+    assert max_subarray_sum([-1, -2, 3, 4, -5, 6, 7], 3) == 8
 
 def test_type_error_non_list():
     """Test type error when input is not a list"""
