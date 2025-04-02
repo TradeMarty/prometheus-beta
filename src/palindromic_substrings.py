@@ -29,14 +29,14 @@ def find_non_overlapping_palindromes(s):
     all_palindromes = set()
     n = len(s)
     
-    # Find all palindromes (single characters and longer)
+    # Find palindromes: single characters and longer
     for length in range(1, n + 1):
         for start in range(n - length + 1):
             substring = s[start:start+length]
             if is_palindrome(substring):
                 all_palindromes.add(substring)
     
-    # Filter out single characters
+    # Separate single and multi-character palindromes
     single_chars = {p for p in all_palindromes if len(p) == 1}
     multi_chars = sorted((p for p in all_palindromes if len(p) > 1), 
                          key=lambda x: (-len(x), x))
@@ -45,9 +45,9 @@ def find_non_overlapping_palindromes(s):
     result = []
     used_indices = set()
     
-    # First add multi-character palindromes
+    # Add multi-character palindromes first
     for palindrome in multi_chars:
-        # Find all occurrences of the palindrome
+        # Prefer longer palindromes
         indices = [i for i in range(n) if s.startswith(palindrome, i)]
         
         for start in indices:
@@ -59,14 +59,13 @@ def find_non_overlapping_palindromes(s):
                 used_indices.update(new_indices)
                 break
     
-    # Then add single characters not already used
-    for char in single_chars:
-        # Find first unused occurrence of single char
+    # Add single characters that have not been used
+    for char in sorted(single_chars):
         for i in range(n):
             if i not in used_indices and s[i] == char:
                 result.append(char)
                 used_indices.add(i)
                 break
     
-    # Sort result lexicographically
+    # Sort and return
     return sorted(result)
