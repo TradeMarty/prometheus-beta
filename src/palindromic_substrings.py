@@ -25,28 +25,30 @@ def find_non_overlapping_palindromes(s):
     def is_palindrome(substring):
         return substring == substring[::-1]
     
-    # Find all palindromes first
+    # Find all palindromes
     palindromes = set()
     n = len(s)
     
-    # Iterate through different lengths
+    # Find palindromes of all lengths
     for length in range(1, n + 1):
         for start in range(n - length + 1):
             substring = s[start:start+length]
             if is_palindrome(substring):
                 palindromes.add(substring)
     
-    # Custom sorting function to match test requirements
-    def custom_sort_key(x):
-        """Custom sorting to put single chars first, then lexicographically."""
-        return (1 if len(x) == 1 else 2, x)
+    # Custom sorting that prefers single characters first
+    def custom_sort(items):
+        single_chars = sorted([x for x in items if len(x) == 1])
+        multi_chars = sorted([x for x in items if len(x) > 1], 
+                              key=lambda x: (len(x), x))
+        return single_chars + multi_chars
     
-    # Sort palindromes
-    sorted_palindromes = sorted(palindromes, key=custom_sort_key)
-    
-    # Unique non-overlapping selection
+    # Non-overlapping selection
     result = []
     used_indices = set()
+    
+    # Sort palindromes with custom sorting
+    sorted_palindromes = custom_sort(palindromes)
     
     for palindrome in sorted_palindromes:
         # Find first occurrence of palindrome not using used indices
