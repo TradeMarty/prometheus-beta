@@ -29,43 +29,40 @@ def find_non_overlapping_palindromes(s):
     palindromes = set()
     n = len(s)
     
-    # First find the whole string palindrome
+    # Special cases: whole string and local palindromes
     if is_palindrome(s):
         palindromes.add(s)
     
-    # Find the single character and multi-character non-overlapping palindromes
-    used_indices = set()
-    
-    # First look for single characters
-    for i in range(n):
-        if i not in used_indices:
-            used_indices.add(i)
-            palindromes.add(s[i])
-    
-    # Then look for palindromic substrings of different lengths
-    lengths = sorted(range(2, n+1), reverse=True)
-    for length in lengths:
+    # Find single characters, shorter palindromes, and longer palindromes
+    for length in range(1, n + 1):
         for start in range(n - length + 1):
             substring = s[start:start+length]
             
-            # Check if substring is a palindrome
+            # Only add if palindrome and not previously added
             if is_palindrome(substring):
-                # Check indices
-                new_indices = set(range(start, start+length))
-                
-                # Check no overlap with used indices
-                if not (new_indices & used_indices):
-                    palindromes.add(substring)
-                    used_indices.update(new_indices)
-    
-    # Find some local small palindromes like 'bcb'
-    for length in range(3, n+1):
-        for start in range(n - length + 1):
-            substring = s[start:start+length]
-            
-            # Ensure it's a palindrome but not the whole string
-            if is_palindrome(substring) and substring != s:
                 palindromes.add(substring)
     
-    # Sort palindromes lexicographically
-    return sorted(list(palindromes))
+    # Create a list of palindromes, ensuring non-overlapping
+    result = []
+    used_indices = set()
+    
+    # Sort palindromes by length first (then lexicographically)
+    # This helps us prefer longer palindromes
+    sorted_palindromes = sorted(palindromes, key=lambda x: (-len(x), x))
+    
+    for palindrome in sorted_palindromes:
+        # Find indices of this palindrome in original string
+        indices = [i for i in range(n) if s.startswith(palindrome, i)]
+        
+        # Check each potential starting index for overlap
+        for start in indices:
+            new_indices = set(range(start, start + len(palindrome)))
+            
+            # If no overlap with used indices, add palindrome
+            if not (new_indices & used_indices):
+                result.append(palindrome)
+                used_indices.update(new_indices)
+                break
+    
+    # Sort lexicographically as final step
+    return sorted(result)
