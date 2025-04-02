@@ -29,28 +29,44 @@ def find_non_overlapping_palindromes(s):
     all_palindromes = set()
     n = len(s)
     
-    # Find all palindromes
+    # Find all palindromes (single characters and longer)
     for length in range(1, n + 1):
         for start in range(n - length + 1):
             substring = s[start:start+length]
             if is_palindrome(substring):
                 all_palindromes.add(substring)
     
-    # Sort palindromes by length (descending) and lexicographically
-    sorted_palindromes = sorted(all_palindromes, key=lambda x: (-len(x), x))
+    # Filter out single characters
+    single_chars = {p for p in all_palindromes if len(p) == 1}
+    multi_chars = sorted((p for p in all_palindromes if len(p) > 1), 
+                         key=lambda x: (-len(x), x))
     
     # Select non-overlapping palindromes
     result = []
     used_indices = set()
     
-    for palindrome in sorted_palindromes:
-        # Check if this palindrome overlaps with used indices
-        new_indices = set(range(s.index(palindrome), s.index(palindrome) + len(palindrome)))
+    # First add multi-character palindromes
+    for palindrome in multi_chars:
+        # Find all occurrences of the palindrome
+        indices = [i for i in range(n) if s.startswith(palindrome, i)]
         
-        # If no overlap, add to result and mark indices as used
-        if not (new_indices & used_indices):
-            result.append(palindrome)
-            used_indices.update(new_indices)
+        for start in indices:
+            new_indices = set(range(start, start + len(palindrome)))
+            
+            # If no overlap with used indices, add and mark as used
+            if not (new_indices & used_indices):
+                result.append(palindrome)
+                used_indices.update(new_indices)
+                break
+    
+    # Then add single characters not already used
+    for char in single_chars:
+        # Find first unused occurrence of single char
+        for i in range(n):
+            if i not in used_indices and s[i] == char:
+                result.append(char)
+                used_indices.add(i)
+                break
     
     # Sort result lexicographically
     return sorted(result)
