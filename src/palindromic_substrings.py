@@ -25,47 +25,31 @@ def find_non_overlapping_palindromes(s):
     def is_palindrome(substring):
         return substring == substring[::-1]
     
-    # Find all possible palindromes first
-    all_palindromes = set()
+    # Find all palindromes
+    palindromes = set()
+    used_indices = set()
     n = len(s)
     
-    # Find palindromes: single characters and longer
-    for length in range(1, n + 1):
+    # First pass: find single character palindromes
+    for i in range(n):
+        if i not in used_indices:
+            palindromes.add(s[i])
+            used_indices.add(i)
+    
+    # Second pass: longer palindromes
+    for length in range(2, n + 1):
         for start in range(n - length + 1):
             substring = s[start:start+length]
             if is_palindrome(substring):
-                all_palindromes.add(substring)
+                # Check for overlap
+                new_indices = set(range(start, start+length))
+                
+                # If no overlap with previously used indices
+                if not (new_indices & used_indices):
+                    # If this is the longest palindrome at this position
+                    if length > 1:
+                        palindromes.add(substring)
+                        used_indices.update(new_indices)
     
-    # Separate single and multi-character palindromes
-    single_chars = {p for p in all_palindromes if len(p) == 1}
-    multi_chars = sorted((p for p in all_palindromes if len(p) > 1), 
-                         key=lambda x: (-len(x), x))
-    
-    # Select non-overlapping palindromes
-    result = []
-    used_indices = set()
-    
-    # Add multi-character palindromes first
-    for palindrome in multi_chars:
-        # Prefer longer palindromes
-        indices = [i for i in range(n) if s.startswith(palindrome, i)]
-        
-        for start in indices:
-            new_indices = set(range(start, start + len(palindrome)))
-            
-            # If no overlap with used indices, add and mark as used
-            if not (new_indices & used_indices):
-                result.append(palindrome)
-                used_indices.update(new_indices)
-                break
-    
-    # Add single characters that have not been used
-    for char in sorted(single_chars):
-        for i in range(n):
-            if i not in used_indices and s[i] == char:
-                result.append(char)
-                used_indices.add(i)
-                break
-    
-    # Sort and return
-    return sorted(result)
+    # Sort palindromes lexicographically
+    return sorted(list(palindromes))
