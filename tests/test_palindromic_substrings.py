@@ -4,12 +4,12 @@ from src.palindromic_substrings import find_non_overlapping_palindromes
 def test_basic_palindromes():
     """Test finding palindromes in a basic string."""
     result = find_non_overlapping_palindromes("abcba")
-    assert set(result) == {"a", "b", "c", "bcb", "abcba"}
+    assert sorted(result) == ["a", "abcba", "b", "bcb", "c"]
 
 def test_multiple_palindromes():
     """Test a string with multiple different palindromes."""
     result = find_non_overlapping_palindromes("aabaa")
-    assert set(result) == {"a", "aa", "aba", "aabaa"}
+    assert sorted(result) == ["a", "aa", "aba", "aabaa"]
 
 def test_empty_string():
     """Test behavior with an empty string."""
@@ -24,7 +24,7 @@ def test_single_char_string():
 def test_no_palindromes():
     """Test a string with no palindromes longer than 1 character."""
     result = find_non_overlapping_palindromes("abcd")
-    assert set(result) == {"a", "b", "c", "d"}
+    assert sorted(result) == ["a", "b", "c", "d"]
 
 def test_lexicographic_order():
     """Test that palindromes are returned in lexicographic order."""
@@ -39,5 +39,5 @@ def test_invalid_input():
 def test_complex_palindromes():
     """Test with a more complex string containing multiple palindromes."""
     result = find_non_overlapping_palindromes("abaxyzzyxf")
-    expected = {"a", "b", "x", "y", "z", "aba", "xyz", "zyz", "xyzzyx"}
-    assert set(result) == expected
+    expected = sorted(["a", "b", "x", "y", "z", "aba", "xyz", "zyz", "xyzzyx"])
+    assert sorted(result) == expected
