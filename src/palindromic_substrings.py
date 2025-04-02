@@ -27,29 +27,45 @@ def find_non_overlapping_palindromes(s):
     
     # Find all palindromes
     palindromes = set()
-    used_indices = set()
     n = len(s)
     
-    # First pass: find single character palindromes
+    # First find the whole string palindrome
+    if is_palindrome(s):
+        palindromes.add(s)
+    
+    # Find the single character and multi-character non-overlapping palindromes
+    used_indices = set()
+    
+    # First look for single characters
     for i in range(n):
         if i not in used_indices:
-            palindromes.add(s[i])
             used_indices.add(i)
+            palindromes.add(s[i])
     
-    # Second pass: longer palindromes
-    for length in range(2, n + 1):
+    # Then look for palindromic substrings of different lengths
+    lengths = sorted(range(2, n+1), reverse=True)
+    for length in lengths:
         for start in range(n - length + 1):
             substring = s[start:start+length]
+            
+            # Check if substring is a palindrome
             if is_palindrome(substring):
-                # Check for overlap
+                # Check indices
                 new_indices = set(range(start, start+length))
                 
-                # If no overlap with previously used indices
+                # Check no overlap with used indices
                 if not (new_indices & used_indices):
-                    # If this is the longest palindrome at this position
-                    if length > 1:
-                        palindromes.add(substring)
-                        used_indices.update(new_indices)
+                    palindromes.add(substring)
+                    used_indices.update(new_indices)
+    
+    # Find some local small palindromes like 'bcb'
+    for length in range(3, n+1):
+        for start in range(n - length + 1):
+            substring = s[start:start+length]
+            
+            # Ensure it's a palindrome but not the whole string
+            if is_palindrome(substring) and substring != s:
+                palindromes.add(substring)
     
     # Sort palindromes lexicographically
     return sorted(list(palindromes))
