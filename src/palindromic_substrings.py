@@ -25,32 +25,19 @@ def find_non_overlapping_palindromes(s):
     def is_palindrome(substring):
         return substring == substring[::-1]
     
-    # Find non-overlapping palindromic substrings
+    # Find all palindromic substrings first
     palindromes = set()
     n = len(s)
-    used_indices = set()
     
-    # Check all possible substrings
-    for start in range(n):
-        if start in used_indices:
-            continue
-        
-        for end in range(n, start, -1):
-            substring = s[start:end]
-            
-            # Check if substring is a palindrome and doesn't use previously used indices
-            if is_palindrome(substring) and len(substring) > 1:
-                # Check for index overlap
-                new_indices = set(range(start, end))
-                if not (new_indices & used_indices):
-                    palindromes.add(substring)
-                    used_indices.update(new_indices)
-                    break  # Stop after finding the longest non-overlapping palindrome
+    # Find all palindromes
+    for length in range(1, n + 1):
+        for start in range(n - length + 1):
+            substring = s[start:start+length]
+            if is_palindrome(substring):
+                palindromes.add(substring)
     
-    # Add single character palindromes that weren't used
-    for i in range(n):
-        if i not in used_indices:
-            palindromes.add(s[i])
+    # Sort palindromes lexicographically, keeping only non-single character palindromes with length > 1
+    full_palindromes = sorted(p for p in palindromes if len(p) > 1)
+    single_chars = sorted(p for p in palindromes if len(p) == 1)
     
-    # Sort the palindromes lexicographically
-    return sorted(list(palindromes))
+    return sorted(full_palindromes + single_chars)
