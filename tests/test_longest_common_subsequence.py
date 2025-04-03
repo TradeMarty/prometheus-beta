@@ -25,7 +25,9 @@ def test_single_character_strings():
     assert longest_common_subsequence("A", "B") == ""
 
 def test_case_sensitivity():
-    assert longest_common_subsequence("Hello", "hello") == ""
+    # Case-sensitive comparison should return empty string if characters don't match exactly
+    assert longest_common_subsequence("HELLO", "hello") == ""
+    assert longest_common_subsequence("hello", "HELLO") == ""
 
 def test_type_error_non_string():
     with pytest.raises(TypeError):
