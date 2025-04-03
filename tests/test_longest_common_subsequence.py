@@ -35,6 +35,17 @@ def test_type_error_non_string():
 def test_long_strings():
     str1 = "AGGTAB" * 100
     str2 = "GXTXAYB" * 100
+    
+    # Compute LCS
     result = longest_common_subsequence(str1, str2)
+    
+    # Check basic properties
     assert len(result) > 0
-    assert all(char in str1 and char in str2 for char in result)
+    
+    # Verify result is a subsequence
+    def is_subsequence(s, t):
+        it = iter(t)
+        return all(c in it for c in s)
+    
+    assert is_subsequence(result, str1)
+    assert is_subsequence(result, str2)
