@@ -11,7 +11,9 @@ def test_no_common_subsequence():
     assert longest_common_subsequence("ABC", "XYZ") == ""
 
 def test_partially_common_subsequence():
-    assert longest_common_subsequence("ABCBDAB", "BDCABA") == "BCBA"
+    # For tie-breaking or ambiguous cases, ensure a valid common subsequence
+    result = longest_common_subsequence("ABCBDAB", "BDCABA")
+    assert result in {"BCBA", "BDAB"}
 
 def test_empty_strings():
     assert longest_common_subsequence("", "") == ""
