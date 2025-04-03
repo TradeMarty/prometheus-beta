@@ -22,18 +22,35 @@ def sum_pairs_with_difference_nine(file_path):
         # Track the total sum of pairs
         total_sum = 0
         
-        # Create a set for O(1) lookup
+        # Use a set for O(1) lookup
         number_set = set(numbers)
+        
+        # Keep track of used pairs to avoid double-counting
+        used_pairs = set()
         
         # Find pairs with difference of 9
         for num in numbers:
-            # Check if the complementary number exists
-            # We look for num + 9 and num - 9
-            if num + 9 in number_set:
-                total_sum += num + (num + 9)
+            # Check pairs (num, num+9) and (num, num-9)
+            complement1 = num + 9
+            complement2 = num - 9
             
-        # Divide by 2 to avoid double-counting pairs
-        return total_sum // 2
+            # Check complement1
+            if complement1 in number_set:
+                # Sort the pair to create a unique identifier 
+                pair = tuple(sorted((num, complement1)))
+                if pair not in used_pairs:
+                    total_sum += num + complement1
+                    used_pairs.add(pair)
+            
+            # Check complement2
+            if complement2 in number_set:
+                # Sort the pair to create a unique identifier
+                pair = tuple(sorted((num, complement2)))
+                if pair not in used_pairs:
+                    total_sum += num + complement2
+                    used_pairs.add(pair)
+        
+        return total_sum
     
     except FileNotFoundError:
         raise FileNotFoundError(f"File not found: {file_path}")
